@@ -1,4 +1,4 @@
-import {assign, createMachine} from 'xstate';
+import { assign, createMachine } from 'xstate';
 
 export const formMachine = createMachine({
     id: 'form',
@@ -9,14 +9,14 @@ export const formMachine = createMachine({
         team: 'Cat',
     },
     states: {
-        idle : {
+        idle: {
             on: {
                 SHOW_FORM: {
                     target: "form"
                 }
             }
         },
-        form : {
+        form: {
             on: {
                 INPUT_NAME: {
                     actions: ['assign_name']
@@ -32,7 +32,7 @@ export const formMachine = createMachine({
                 },
                 SUBMIT: [
                     {
-                      cond: "requiredFields",
+                        cond: "requiredFields",
                         actions: ['emptyFields']
                     },
                     {
@@ -46,19 +46,19 @@ export const formMachine = createMachine({
                 invalid: {}
             }
         },
-        submitting : {
+        submitting: {
             invoke: {
                 id: 'submitting',
                 src: 'request',
                 onDone: {
-                    target:'success'
+                    target: 'success'
                 },
                 onError: {
-                    target : 'form.invalid'
+                    target: 'form.invalid'
                 }
             }
         },
-        success : {
+        success: {
             on: {
                 RESTART: {
                     target: "form",
@@ -69,21 +69,21 @@ export const formMachine = createMachine({
                 }
             }
         },
-        end : {
+        end: {
             type: "final"
         },
     }
 },
     {
         actions: {
-            assign_name: assign({name: (context, event)=> event.value}),
-            assign_mail: assign({mail: (context, event)=> event.value}),
-            assign_team: assign({team: (context, event)=> event.value}),
-            clean_form: assign({name: '', mail:'', team: ''}),
-            emptyFields: ()=>{alert("All fields are required")},
+            assign_name: assign({ name: (context, event) => event.value }),
+            assign_mail: assign({ mail: (context, event) => event.value }),
+            assign_team: assign({ team: (context, event) => event.value }),
+            clean_form: assign({ name: '', mail: '', team: '' }),
+            emptyFields: () => { alert("All fields are required") },
         },
         services: {
-            request : ()=> {
+            request: () => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         const math = Math.random();
@@ -93,11 +93,11 @@ export const formMachine = createMachine({
             }
         },
         guards: {
-            requiredFields: (context)=> {
-               return  !context.name
-                || "" === context.name.trim()
-                || !context.mail
-                || "" === context.mail.trim();
+            requiredFields: (context) => {
+                return !context.name
+                    || "" === context.name.trim()
+                    || !context.mail
+                    || "" === context.mail.trim();
             }
 
         },
